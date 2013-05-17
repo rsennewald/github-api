@@ -382,7 +382,7 @@ public class GHRepository {
      * Retrieves all the pull requests of a particular state with additional parameters (filters).
      * Pass additional filters like "&base=master"
      *
-     * @see #listPullRequests(GHIssueState)
+     * @see #listPullRequests(GHIssueState, String)
      */
     public List<GHPullRequest> getPullRequests(GHIssueState state, String filter) throws IOException {
         return listPullRequests(state, filter).asList();
