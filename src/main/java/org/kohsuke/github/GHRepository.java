@@ -377,6 +377,34 @@ public class GHRepository {
             }
         };
     }
+    
+    /**
+     * Retrieves all the pull requests of a particular state with additional parameters (filters).
+     * Pass additional filters like "&base=master"
+     *
+     * @see #listPullRequests(GHIssueState)
+     */
+    public List<GHPullRequest> getPullRequests(GHIssueState state, String filter) throws IOException {
+        return listPullRequests(state, filter).asList();
+    }
+    
+    /**
+     * Retrieves all the pull requests of a particular state, with additional parameters (filters).
+     * Pass additional filters like "&base=master"
+     */
+    public PagedIterable<GHPullRequest> listPullRequests(final GHIssueState state, final String filter) {
+        return new PagedIterable<GHPullRequest>() {
+            public PagedIterator<GHPullRequest> iterator() {
+                return new PagedIterator<GHPullRequest>(root.retrieve().asIterator(String.format("/repos/%s/%s/pulls?state=%s%s", owner.login, name, state.name().toLowerCase(Locale.ENGLISH), filter), GHPullRequest[].class)) {
+                    @Override
+                    protected void wrapUp(GHPullRequest[] page) {
+                        for (GHPullRequest pr : page)
+                            pr.wrap(GHRepository.this);
+                    }
+                };
+            }
+        };
+    }
 
     /**
      * Retrieves the currently configured hooks.
